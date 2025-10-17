@@ -21,6 +21,7 @@ const navItems = ref<NavItem[]>([
   { name: 'About', link: '/about' },
   { name: 'Contact', link: '/contact' },
   { name: 'Customers', link: '/customers' },
+  { name: 'Machines', link: '/machines' },
 ])
 </script>
 

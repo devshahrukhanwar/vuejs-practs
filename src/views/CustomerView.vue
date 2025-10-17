@@ -1,24 +1,18 @@
 <script lang="ts" setup>
 import { shallowRef, onMounted, ref } from 'vue';
 import { useCustomer } from '@/composables';
+import { Customer } from '@/composables/useCustomer/schema';
 
-const customers = shallowRef([]);
+const customers = shallowRef<Customer[]>([]);
 const { getCustomers } = useCustomer();
 
 onMounted(async () => {
-  const fetchedCustomers = await getCustomers();
-
-  if (fetchedCustomers) {
-    customers.value = fetchedCustomers;
-  }
+  customers.value = await getCustomers();
 });
 
 const search = ref<string>('');
 const searchCustomers = async () => {
-  const fetchedCustomers = await getCustomers(search.value);
-  if (fetchedCustomers) {
-    customers.value = fetchedCustomers;
-  }
+  customers.value = await getCustomers(search.value);
 };
 </script>
 
@@ -39,6 +33,7 @@ const searchCustomers = async () => {
         <tr>
           <th class="border border-gray-300">Name</th>
           <th class="border border-gray-300">Email</th>
+          <th class="border border-gray-300">Machines</th>
           <th class="border border-gray-300">Phone</th>
         </tr>
       </thead>
@@ -46,6 +41,7 @@ const searchCustomers = async () => {
         <tr v-for="customer in customers" :key="customer.id">
           <td class="border border-gray-300 px-2">{{ customer.name }}</td>
           <td class="border border-gray-300 px-2">{{ customer.email }}</td>
+          <td class="border border-gray-300 px-2">{{ customer?.machines?.map(machine => machine.name).join(', ') }}</td>
           <td class="border border-gray-300 px-2">{{ customer.phone }}</td>
         </tr>
       </tbody>
