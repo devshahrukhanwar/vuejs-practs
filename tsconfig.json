@@ -1,4 +1,21 @@
 {
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "strict": true,
+    "jsx": "preserve",
+    "lib": ["es2015", "dom", "es2015.promise", "ES2022"],
+    "allowJs": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    "forceConsistentCasingInFileNames": true,
+  },
   "files": [],
   "references": [
     {
