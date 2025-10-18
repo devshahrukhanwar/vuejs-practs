@@ -1,10 +1,16 @@
 <script lang="ts" setup>
-import { shallowReactive, shallowRef, onMounted } from 'vue';
-import { ErrorMessage, Field, Form } from 'vee-validate';
+import { shallowRef, onMounted } from 'vue';
 import * as yup from 'yup';
+import { ErrorMessage, Field, Form } from 'vee-validate';
 import { useMachine, useCustomer } from '@/composables';
-import type { Machine } from '@/composables/useMachine/schema';
-import { Customer } from '@/composables/useCustomer/schema';
+import type { Customer, Machine } from '@/composables';
+
+const { getMachines, createMachine, toggleProducingStatus } = useMachine();
+const { getCustomers } = useCustomer();
+
+const toggling = shallowRef<boolean>(false);
+const machines = shallowRef<Machine[]>([]);
+const customers = shallowRef<Customer[]>([]);
 
 const schema = yup.object({
   name: yup.string().required('*Name is required'),
@@ -14,33 +20,19 @@ const schema = yup.object({
   customerId: yup.string().optional().default(''),
 });
 
-const toggling = shallowRef<boolean>(false);
-const machines = shallowRef<Machine[]>([]);
-const customers = shallowRef<Customer[]>([]);
-const machine = shallowReactive<Machine>({
-  name: '',
-  description: '',
-  location: '',
-  producing: false, // Default value set to false
-  customerId: '',
-});
-
-const { getMachines, createMachine, toggleProducingStatus } = useMachine();
-const { getCustomers } = useCustomer();
-
 onMounted(async () => {
-  machines.value = await getMachines();
+  machines.value = (await getMachines()) || [];
   customers.value = await getCustomers();
 });
 
 const handleAddMachine = async (
-  values: Machine,
+  values: Machine | Record<string, unknown>,
   { resetForm }: { resetForm: () => void }
 ) => {
   try {
-    await createMachine(values);
+    await createMachine(values as Machine);
     getMachines().then((data) => {
-      machines.value = data;
+      machines.value = data || [];
     });
     resetForm();
   } catch (error) {
@@ -54,7 +46,7 @@ const handleToggleStatus = async (id: string) => {
     await toggleProducingStatus(id);
 
     getMachines().then((data) => {
-      machines.value = data;
+      machines.value = data || [];
     });
   } catch (error) {
     console.error('Error toggling machine status:', error);
@@ -96,7 +88,7 @@ const handleToggleStatus = async (id: string) => {
               {{ customer.name }}
             </option>
           </Field>
-          <ErrorMessage name="customer" class="text-red-500 text-sm mt-1" />
+          <ErrorMessage name="customerId" class="text-red-500 text-sm mt-1" />
         </div>
         <div class="col-span-2">
           <button

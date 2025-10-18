@@ -1,16 +1,17 @@
 <script lang="ts" setup>
 import { shallowRef, onMounted, ref } from 'vue';
 import { useCustomer } from '@/composables';
-import { Customer } from '@/composables/useCustomer/schema';
+import type { Customer } from '@/composables/useCustomer/schema';
 
-const customers = shallowRef<Customer[]>([]);
 const { getCustomers } = useCustomer();
+
+const search = ref<string>('');
+const customers = shallowRef<Customer[]>([]);
 
 onMounted(async () => {
   customers.value = await getCustomers();
 });
 
-const search = ref<string>('');
 const searchCustomers = async () => {
   customers.value = await getCustomers(search.value);
 };
@@ -19,6 +20,7 @@ const searchCustomers = async () => {
 <template>
   <div>
     <div class="font-bold text-lg my-4">Customer Page</div>
+    <!-- Search section begins -->
     <div class="search-bar">
       <input
         v-model="search"
@@ -27,7 +29,8 @@ const searchCustomers = async () => {
         class="border border-gray-300 rounded px-2 py-1 mb-4 w-full"
         @keyup.passive="searchCustomers"
       />
-    </div>
+    </div> <!-- Search section ends -->
+    <!-- Table section begins -->
     <table class="border-collapse border border-gray-400 w-full">
       <thead class="items-end">
         <tr>
@@ -45,7 +48,7 @@ const searchCustomers = async () => {
           <td class="border border-gray-300 px-2">{{ customer.phone }}</td>
         </tr>
       </tbody>
-    </table>
+    </table> <!-- Table section ends -->
   </div>
 </template>
 

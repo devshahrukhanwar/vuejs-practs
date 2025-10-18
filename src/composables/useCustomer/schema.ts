@@ -1,4 +1,4 @@
-import { Machine } from '../useMachine/schema'
+import type { Machine } from '../useMachine/schema'
 
 export type Customer = {
   id: string

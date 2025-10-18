@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { Machine } from './schema'
 
 export function useMachine() {
-  async function getMachines(search: string | number = ''): Promise<Machine[] | void> {
+  async function getMachines(): Promise<Machine[] | void> {
     try {
       const response = await axios.get(`machines`)
       const { data } = response
